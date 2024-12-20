@@ -18,14 +18,43 @@
         playeGame('Scissors');
     ">Scissors</button>
 
-    <p>chose your move</p>
+
+    <p class="js-result"></p>
+    <p class="js-move"></p>
+    <p class="js-score"></p>
+
+    <button onclick="
+        score.Won = 0;
+        score.lost = 0;
+        score.tied = 0;
+        localStorage.removeItem('score');
+        updatedScore();
+    ">Reset Score</button>
+
+    <p>choose your move</p>
     <script>
+
+        let score = JSON.parse(localStorage.getItem('score')) || {
+            Won : 0,
+            lost : 0,
+            tied : 0
+        }
+        /*
+        if(!score){
+            score = {
+            Won : 0,
+            lost : 0,
+            tied : 0};
+        }*/
+        
+        updatedScore();
+
         function playeGame(playerMove){
             const computerMove = computerMove1();
             let result = '';
             if(playerMove === 'Scissors'){
                 if(computerMove === 'Rock'){
-                    result = 'You lose';
+                    result = 'You Lose';
                 }else if(computerMove === 'Paper'){
                     result = 'You Win';
                 }else if(computerMove === 'Scissors'){
@@ -49,7 +78,23 @@
                 }
             }
 
-            alert(`You picked ${playerMove}, computer picked ${computerMove}, ${result}`);
+            if(result === 'You Win'){
+                score.Won += 1;
+            }else if(result === 'You Lose'){
+                score.lost += 1;
+            }else if(result === 'Tie'){
+                score.tied += 1;
+            }
+
+            localStorage.setItem('score', JSON.stringify(score));
+            
+            document.querySelector('.js-result').innerHTML = result;
+
+            document.querySelector('.js-move').innerHTML = `you ${playerMove} - ${computerMove} computer`;
+
+            updatedScore();
+            
+
         }
         function computerMove1(){
             const randomNumber = Math.random();
@@ -67,6 +112,13 @@
 
             return computerMove;
         }
+
+        function updatedScore(){
+            document.querySelector('.js-score')
+            .innerHTML = `Won: ${score.Won}, Lost: ${score.lost}, Tied: ${score.tied}`;
+        }
+        
+
     </script>
 </body>
 </html>
